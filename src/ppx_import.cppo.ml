@@ -3,6 +3,7 @@
 #define Pcstr_tuple(x) x
 #endif
 
+open Ppx_tools_405
 open Longident
 open Asttypes
 open Parsetree
