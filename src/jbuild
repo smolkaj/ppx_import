@@ -1,0 +1,15 @@
+(jbuild_version 1)
+
+;; preprocessing using cppo
+(rule
+ ((targets (ppx_import.ml))
+  (deps    (ppx_import.cppo.ml))
+  (action  (run ${bin:cppo} -V OCAML:${ocaml_version} ${<} -o ${@}))))
+
+(library
+ ((name ppx_import)
+  (public_name ppx_import)
+  (kind ppx_rewriter)
+  (libraries (ppx_tools))
+  (virtual_deps (cppo))
+  (preprocess (pps (ppx_metaquot)))))

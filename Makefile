@@ -1,25 +1,18 @@
-build:
-	cp pkg/META.in pkg/META
-	ocaml pkg/build.ml native=true native-dynlink=true
+INSTALL_ARGS := $(if $(PREFIX),--prefix $(PREFIX),)
 
-test: build
-	rm -rf _build/src_test
-	ocamlbuild -j 0 -use-ocamlfind -classic-display src_test/test_ppx_import.native --
+# Default rule
+default:
+	jbuilder build @install
+
+install:
+	jbuilder install $(INSTALL_ARGS)
+
+uninstall:
+	jbuilder uninstall $(INSTALL_ARGS)
+
+reinstall: uninstall reinstall
 
 clean:
-	ocamlbuild -clean
+	rm -rf _build
 
-.PHONY: build test clean
-
-VERSION      := $$(opam query --version)
-NAME_VERSION := $$(opam query --name-version)
-ARCHIVE      := $$(opam query --archive)
-
-release:
-	git tag -a v$(VERSION) -m "Version $(VERSION)."
-	git push origin v$(VERSION)
-	opam publish prepare $(NAME_VERSION) $(ARCHIVE)
-	opam publish submit $(NAME_VERSION)
-	rm -rf $(NAME_VERSION)
-
-.PHONY: release
+.PHONY: default install uninstall reinstall clean
