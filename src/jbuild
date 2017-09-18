@@ -10,6 +10,6 @@
  ((name ppx_import)
   (public_name ppx_import)
   (kind ppx_rewriter)
-  (libraries (ppx_tools_versioned))
+  (libraries (ppx_driver ppx_tools_versioned))
   (virtual_deps (cppo))
   (preprocess (pps (ppx_metaquot)))))

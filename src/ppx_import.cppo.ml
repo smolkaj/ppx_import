@@ -12,13 +12,7 @@ open Ast_helper
 open Types
 open Ident
 
-let raise_errorf ?sub ?if_highlight ?loc message =
-  message |> Printf.kprintf (fun str ->
-    let err = Location.error ?sub ?if_highlight ?loc str in
-    raise (Location.Error err))
-
-let replace_loc loc =
-  { default_mapper with location = fun _ _ -> loc }
+let raise_errorf = Location.raise_errorf
 
 let locate_sig ~loc lid =
   let cu, path =
@@ -337,6 +331,12 @@ let module_type mapper modtype_decl =
     end
   | _ -> default_mapper.module_type mapper modtype_decl
 
+let mapper = { default_mapper with type_declaration; module_type; }
+let impl = mapper.structure mapper
+let intf = mapper.signature mapper
+;;
+
 let () =
-  Ast_mapper.register "ppx_import" (fun argv ->
-    { default_mapper with type_declaration; module_type; })
+  Ppx_driver.register_transformation_using_ocaml_current_ast
+    ~impl ~intf "ppx_import"
+;;
